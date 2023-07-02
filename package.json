@@ -1,12 +1,12 @@
 {
   "name": "daily-diet-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "An api to control user's daily diet.",
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "lint": "eslint src -ext .ts --fix",
-    "knex": "node ./node_modules/knex/bin/cli.js"
+    "knex": "node --loader tsx ./node_modules/knex/bin/cli.js"
   },
   "keywords": [],
   "author": "Fernando Brino",
@@ -15,10 +15,12 @@
     "dotenv": "^16.3.1",
     "fastify": "^4.19.1",
     "knex": "^2.4.2",
-    "sqlite3": "^5.1.6"
+    "sqlite3": "^5.1.6",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@rocketseat/eslint-config": "^1.2.0",
+    "@types/node": "^20.3.3",
     "eslint": "^8.44.0",
     "tsx": "^3.12.7",
     "typescript": "^5.1.6"
