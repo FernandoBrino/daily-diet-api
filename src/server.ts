@@ -1,23 +1,9 @@
-import fastify from "fastify";
-import { usersRoutes } from "./routes/users";
-import fastifyCookie from "@fastify/cookie";
-import { dietsRoutes } from "./routes/diets";
-
-const app = fastify();
-
-app.register(fastifyCookie);
-
-app.register(dietsRoutes, {
-  prefix: "/diets",
-});
-
-app.register(usersRoutes, {
-  prefix: "/users",
-});
+import { app } from "./app";
+import { env } from "./env";
 
 app
   .listen({
-    port: 3333,
+    port: env.PORT,
   })
   .then(() => {
     console.log("HTTP server listening");
