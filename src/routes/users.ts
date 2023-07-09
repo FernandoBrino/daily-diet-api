@@ -19,16 +19,12 @@ export async function usersRoutes(app: FastifyInstance) {
   );
 
   app.post("/", async (request, reply) => {
-    let sessionId = request.cookies.sessionId;
+    const sessionId = randomUUID();
 
-    if (!sessionId) {
-      sessionId = randomUUID();
-
-      reply.cookie("sessionId", sessionId, {
-        path: "/",
-        maxAge: 1000 * 60 * 60 * 24 * 1, // 1 dia
-      });
-    }
+    reply.cookie("sessionId", sessionId, {
+      path: "/",
+      maxAge: 1000 * 60 * 60 * 24 * 1, // 1 dia
+    });
 
     const createUserBodySchema = z.object({
       name: z.string(),
