@@ -17,6 +17,15 @@ describe("Users routes", () => {
     execSync("npm run knex migrate:latest");
   });
 
+  it("should create a new user", async () => {
+    await request(app.server)
+      .post("/users")
+      .send({
+        name: "John Doe",
+      })
+      .expect(201);
+  });
+
   it("should list all users", async () => {
     const createUserResponse = await request(app.server).post("/users").send({
       name: "John Doe",
