@@ -72,6 +72,45 @@ describe("Diets routes", () => {
     ]);
   });
 
+  it.only("should get a single user diet", async () => {
+    const createNewUserResponse = await request(app.server)
+      .post("/users")
+      .send({
+        name: "John Doe",
+      })
+      .expect(201);
+
+    const cookies = createNewUserResponse.get("Set-Cookie");
+
+    await request(app.server)
+      .post("/diets")
+      .set("Cookie", cookies)
+      .send({
+        name: "Bulking",
+        description: "Comer muito",
+        date_hour: "2023-07-10",
+      })
+      .expect(201);
+
+    const listDietsResponse = await request(app.server)
+      .get("/diets")
+      .set("Cookie", cookies)
+      .expect(200);
+
+    const getDietResponse = await request(app.server)
+      .get(`/diets/${listDietsResponse.body.diets[0].id}`)
+      .set("Cookie", cookies)
+      .expect(200);
+
+    expect(getDietResponse.body.diet).toEqual([
+      expect.objectContaining({
+        name: "Bulking",
+        description: "Comer muito",
+        date_hour: "2023-07-10",
+      }),
+    ]);
+  });
+
   it("should update a user diet", async () => {
     const createNewUserResponse = await request(app.server)
       .post("/users")
