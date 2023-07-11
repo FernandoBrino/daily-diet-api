@@ -154,7 +154,7 @@ export async function dietsRoutes(app: FastifyInstance) {
       const createDietBodySchema = z.object({
         name: z.string(),
         description: z.string(),
-        dateHour: z.string(),
+        date_hour: z.string(),
       });
 
       const body = createDietBodySchema.safeParse(request.body);
@@ -176,7 +176,7 @@ export async function dietsRoutes(app: FastifyInstance) {
         id: randomUUID(),
         name: body.data.name,
         description: body.data.description,
-        date_hour: body.data.dateHour,
+        date_hour: body.data.date_hour,
         is_on_diet: false,
       };
 

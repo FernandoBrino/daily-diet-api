@@ -12,7 +12,7 @@ describe("Diets routes", () => {
     await app.close();
   });
 
-  beforeEach(async () => {
+  beforeEach(() => {
     execSync("npm run knex migrate:rollback -all");
     execSync("npm run knex migrate:latest");
   });
@@ -33,7 +33,7 @@ describe("Diets routes", () => {
       .send({
         name: "Bulking",
         description: "Comer muito",
-        dateHour: "2023-07-10",
+        date_hour: "2023-07-10",
       })
       .expect(201);
   });
@@ -54,7 +54,7 @@ describe("Diets routes", () => {
       .send({
         name: "Bulking",
         description: "Comer muito",
-        dateHour: "2023-07-10",
+        date_hour: "2023-07-10",
       })
       .expect(201);
 
@@ -63,14 +63,89 @@ describe("Diets routes", () => {
       .set("Cookie", cookies)
       .expect(200);
 
-    expect(listDietsResponse.body.diets).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          name: "Bulking",
-          description: "Comer muito",
-          dateHour: "2023-07-10",
-        }),
-      ])
+    expect(listDietsResponse.body.diets).toEqual([
+      expect.objectContaining({
+        name: "Bulking",
+        description: "Comer muito",
+        date_hour: "2023-07-10",
+      }),
+    ]);
+  });
+
+  it("should update a user diet", async () => {
+    const createNewUserResponse = await request(app.server)
+      .post("/users")
+      .send({
+        name: "John Doe",
+      })
+      .expect(201);
+
+    const cookies = createNewUserResponse.get("Set-Cookie");
+
+    await request(app.server)
+      .post("/diets")
+      .set("Cookie", cookies)
+      .send({
+        name: "Bulking",
+        description: "Comer muito",
+        date_hour: "2023-07-10",
+      })
+      .expect(201);
+
+    const listDietsResponse = await request(app.server)
+      .get("/diets")
+      .set("Cookie", cookies)
+      .expect(200);
+
+    const updatedDietResponse = await request(app.server)
+      .put(`/diets/${listDietsResponse.body.diets[0].id}`)
+      .set("Cookie", cookies)
+      .send({
+        name: "Cutting",
+        description: "Comer menos",
+        date_hour: "2023-07-10",
+        is_on_diet: true,
+      })
+      .expect(200);
+
+    expect(updatedDietResponse.body.diet).toEqual(
+      expect.objectContaining({
+        name: "Cutting",
+        description: "Comer menos",
+        date_hour: "2023-07-10",
+        is_on_diet: 1,
+      })
     );
+  });
+
+  it("should delete a diet", async () => {
+    const createNewUserResponse = await request(app.server)
+      .post("/users")
+      .send({
+        name: "John Doe",
+      })
+      .expect(201);
+
+    const cookies = createNewUserResponse.get("Set-Cookie");
+
+    await request(app.server)
+      .post("/diets")
+      .set("Cookie", cookies)
+      .send({
+        name: "Bulking",
+        description: "Comer muito",
+        date_hour: "2023-07-10",
+      })
+      .expect(201);
+
+    const listDietsResponse = await request(app.server)
+      .get("/diets")
+      .set("Cookie", cookies)
+      .expect(200);
+
+    await request(app.server)
+      .delete(`/diets/${listDietsResponse.body.diets[0].id}`)
+      .set("Cookie", cookies)
+      .expect(204);
   });
 });
